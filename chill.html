@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Psychology Fun Pack</title>
+  <style>
+    /* Nintendo-inspired retro background */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: url('https://i.imgur.com/84Yiy4N.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    h1 {
+      text-shadow: 2px 2px #000;
+    }
+    .button {
+      margin: 5px;
+      padding: 10px 20px;
+      background: #f7d794;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+      box-shadow: 2px 2px 0px #000;
+    }
+    .game-container {
+      display: none;
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid #f7d794;
+      border-radius: 8px;
+      width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+    /* Thought Maze Styles */
+    .maze-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 3px;
+      padding: 5px;
+      background-color: #0f3460;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+    }
+    .cell {
+      width: 50px;
+      height: 50px;
+      background-color: #e94560;
+    }
+    .wall { background-color: #16213e; }
+    .player { background-color: #f7d794; border-radius: 50%; }
+    .goal { background-color: #4cd137; }
+    #mazeTimer { font-size: 18px; margin-bottom: 10px; }
+    /* Thought Bubble Pop Styles */
+    #bubbleCanvas {
+      background-color: #0f3460;
+      display: block;
+      margin: 0 auto;
+      border: 2px solid #f7d794;
+    }
+    #bubbleTimer { margin-top: 10px; font-size: 18px; }
+    /* Love or Logic? Quiz Styles */
+    #quizTimer { margin-bottom: 10px; font-size: 18px; }
+    /* Reverse Psychology Styles */
+    #reverse { height: 120px; position: relative; }
+    #reverseButton {
+      position: absolute;
+      width: 150px;
+      height: 50px;
+      font-size: 16px;
+      transition: transform 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <h1>Psychology Fun Pack</h1>
+  <!-- Main Menu Buttons -->
+  <div id="menu">
+    <button class="button" onclick="startGame('maze')">Start Thought Maze</button>
+    <button class="button" onclick="startGame('bubble')">Start Thought Bubble Pop</button>
+    <button class="button" onclick="startGame('quiz')">Start Love or Logic?</button>
+    <button class="button" onclick="startGame('reverse')">Start Reverse Psychology</button>
+  </div>
+
+  <!-- Thought Maze Container -->
+  <div id="maze" class="game-container">
+    <div id="mazeTimer">Time Remaining: 30</div>
+    <div class="maze-container"></div>
+    <div id="mazeMessage" style="margin-top: 10px; display: none;">You found your way! Maybe that means we're on the same wavelength.</div>
+  </div>
+
+  <!-- Thought Bubble Pop Container -->
+  <div id="bubble" class="game-container">
+    <canvas id="bubbleCanvas" width="300" height="300"></canvas>
+    <div id="bubbleTimer">Time Remaining: 20</div>
+    <div id="bubbleMessage" style="margin-top: 10px; display: none;">Awesome! You popped enough bubbles—your thoughts are truly electric!</div>
+  </div>
+
+  <!-- Love or Logic? Quiz Container -->
+  <div id="quiz" class="game-container">
+    <div id="quizTimer">Time Remaining: 15</div>
+    <div id="quizContent"></div>
+  </div>
+
+  <!-- Reverse Psychology Container -->
+  <div id="reverse" class="game-container">
+    <button id="reverseButton" class="button">Don't Click Me!</button>
+    <div id="reverseMessage" style="margin-top: 10px; display: none;"></div>
+  </div>
+
+  <script>
+    let currentGame = '';
+
+    function startGame(game) {
+      // Hide all game containers
+      document.querySelectorAll('.game-container').forEach(el => el.style.display = 'none');
+      // Hide menu (optional: if you want to always show it, comment out the next line)
+      // document.getElementById('menu').style.display = 'none';
+      // Clear messages and timers
+      document.getElementById('mazeMessage').style.display = 'none';
+      document.getElementById('bubbleMessage').style.display = 'none';
+      document.getElementById('reverseMessage').style.display = 'none';
+      // Show chosen game container
+      document.getElementById(game).style.display = 'block';
+      currentGame = game;
+      if(game === 'maze') { initMaze(); }
+      else if(game === 'bubble') { initBubble(); }
+      else if(game === 'quiz') { initQuiz(); }
+      else if(game === 'reverse') { initReverse(); }
+    }
+
+    /****************** Thought Maze Game ******************/
+    const mazeLayout = [
+      [1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 1, 0, 1],
+      [1, 0, 1, 1, 0, 1],
+      [1, 0, 1, 0, 0, 1],
+      [1, 0, 1, 1, 0, 1],
+      [1, 0, 0, 0, 2, 1],
+      [1, 1, 1, 1, 1, 1]
+    ];
+    let playerPos = { x: 1, y: 1 };
+    let mazeTimerInterval, mazeTimeRemaining = 30;
+
+    function initMaze() {
+      playerPos = { x: 1, y: 1 };
+      mazeTimeRemaining = 30;
+      document.getElementById('mazeTimer').textContent = 'Time Remaining: ' + mazeTimeRemaining;
+      drawMaze();
+      if(mazeTimerInterval) clearInterval(mazeTimerInterval);
+      mazeTimerInterval = setInterval(() => {
+        mazeTimeRemaining--;
+        document.getElementById('mazeTimer').textContent = 'Time Remaining: ' + mazeTimeRemaining;
+        if(mazeTimeRemaining <= 0) {
+          clearInterval(mazeTimerInterval);
+          document.getElementById('mazeMessage').textContent = "Time's up! Maze resets.";
+          document.getElementById('mazeMessage').style.display = 'block';
+          setTimeout(initMaze, 2000);
+        }
+      }, 1000);
+    }
+
+    function drawMaze() {
+      const mazeContainer = document.querySelector('#maze .maze-container');
+      mazeContainer.innerHTML = '';
+      mazeLayout.forEach((row, y) => {
+        row.forEach((cell, x) => {
+          let div = document.createElement('div');
+          div.classList.add('cell');
+          if(cell === 1) div.classList.add('wall');
+          if(cell === 2) div.classList.add('goal');
+          if(x === playerPos.x && y === playerPos.y) div.classList.add('player');
+          mazeContainer.appendChild(div);
+        });
+      });
+    }
+
+    function movePlayer(dx, dy) {
+      let newX = playerPos.x + dx;
+      let newY = playerPos.y + dy;
+      if(mazeLayout[newY][newX] !== 1) {
+        playerPos.x = newX;
+        playerPos.y = newY;
+        drawMaze();
+      }
+      if(mazeLayout[newY][newX] === 2) {
+        document.getElementById('mazeMessage').textContent = "You found your way! Maybe that means we're on the same wavelength.";
+        document.getElementById('mazeMessage').style.display = 'block';
+        clearInterval(mazeTimerInterval);
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if(currentGame === 'maze') {
+        switch(e.key) {
+          case 'ArrowUp': movePlayer(0, -1); break;
+          case 'ArrowDown': movePlayer(0, 1); break;
+          case 'ArrowLeft': movePlayer(-1, 0); break;
+          case 'ArrowRight': movePlayer(1, 0); break;
+        }
+      }
+    });
+
+    /****************** Thought Bubble Pop Game ******************/
+    let bubbles = [];
+    let bubblePoppedCount = 0;
+    let bubbleAnimationFrame;
+    let bubbleTimerInterval, bubbleTimeRemaining = 20;
+    let bubbleSpeedMultiplier = 1;
+    const bubbleCanvas = document.getElementById('bubbleCanvas');
+    const bubbleCtx = bubbleCanvas.getContext('2d');
+
+    function initBubble() {
+      bubbles = [];
+      bubblePoppedCount = 0;
+      bubbleTimeRemaining = 20;
+      bubbleSpeedMultiplier = 1;
+      document.getElementById('bubbleTimer').textContent = 'Time Remaining: ' + bubbleTimeRemaining;
+      document.getElementById('bubbleMessage').style.display = 'none';
+      for(let i = 0; i < 5; i++){
+        bubbles.push(createBubble());
+      }
+      cancelAnimationFrame(bubbleAnimationFrame);
+      animateBubbles();
+      if(bubbleTimerInterval) clearInterval(bubbleTimerInterval);
+      bubbleTimerInterval = setInterval(() => {
+        bubbleTimeRemaining--;
+        bubbleSpeedMultiplier += 0.1;
+        document.getElementById('bubbleTimer').textContent = 'Time Remaining: ' + bubbleTimeRemaining;
+        if(bubbleTimeRemaining <= 0) {
+          clearInterval(bubbleTimerInterval);
+          if(bubblePoppedCount < 5) {
+            document.getElementById('bubbleMessage').textContent = "Time's up! Try again.";
+            document.getElementById('bubbleMessage').style.display = 'block';
+            setTimeout(initBubble, 2000);
+          }
+        }
+      }, 1000);
+    }
+
+    function createBubble() {
+      const words = ['Dreams', 'Memories', 'Emotions', 'Coffee', 'Sleep', 'Cats'];
+      return {
+        x: Math.random() * (bubbleCanvas.width - 30) + 15,
+        y: bubbleCanvas.height + Math.random() * 50,
+        r: 15,
+        text: words[Math.floor(Math.random() * words.length)],
+        speed: Math.random() * 1 + 0.5
+      };
+    }
+
+    function animateBubbles() {
+      bubbleCtx.clearRect(0, 0, bubbleCanvas.width, bubbleCanvas.height);
+      for(let bubble of bubbles) {
+        bubble.y -= bubble.speed * bubbleSpeedMultiplier;
+        if(bubble.y + bubble.r < 0) {
+          bubble.y = bubbleCanvas.height + bubble.r;
+          bubble.x = Math.random() * (bubbleCanvas.width - 30) + 15;
+        }
+        drawBubble(bubble);
+      }
+      bubbleAnimationFrame = requestAnimationFrame(animateBubbles);
+    }
+
+    function drawBubble(bubble) {
+      bubbleCtx.beginPath();
+      bubbleCtx.arc(bubble.x, bubble.y, bubble.r, 0, Math.PI * 2);
+      bubbleCtx.fillStyle = 'rgba(247, 215, 148, 0.8)';
+      bubbleCtx.fill();
+      bubbleCtx.strokeStyle = '#f7d794';
+      bubbleCtx.stroke();
+      bubbleCtx.closePath();
+      bubbleCtx.fillStyle = 'black';
+      bubbleCtx.font = '10px Arial';
+      bubbleCtx.textAlign = 'center';
+      bubbleCtx.fillText(bubble.text, bubble.x, bubble.y + 3);
+    }
+
+    bubbleCanvas.addEventListener('click', function(e) {
+      const rect = bubbleCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      for(let i = 0; i < bubbles.length; i++) {
+        const b = bubbles[i];
+        const dist = Math.sqrt((clickX - b.x)**2 + (clickY - b.y)**2);
+        if(dist < b.r) {
+          bubbles.splice(i, 1);
+          bubblePoppedCount++;
+          bubbles.push(createBubble());
+          break;
+        }
+      }
+      if(bubblePoppedCount >= 5) {
+        clearInterval(bubbleTimerInterval);
+        document.getElementById('bubbleMessage').textContent = "Awesome! You popped enough bubbles—your thoughts are truly electric!";
+        document.getElementById('bubbleMessage').style.display = 'block';
+      }
+    });
+
+    /****************** Love or Logic? Quiz Game ******************/
+    let quizQuestions = [
+      { question: "Would you rather read minds or control dreams?", options: ["Read Minds", "Control Dreams"] },
+      { question: "Would you rather never forget anything or never feel sad?", options: ["Never Forget", "Never Feel Sad"] },
+      { question: "Would you rather live in a world of logic or a world of emotions?", options: ["Logic", "Emotions"] }
+    ];
+    let currentQuizIndex = 0;
+    let quizTimerInterval, quizTimeRemaining = 15;
+
+    function initQuiz() {
+      currentQuizIndex = 0;
+      document.getElementById('quizContent').innerHTML = '';
+      initQuizTimer();
+      showQuizQuestion();
+    }
+
+    function initQuizTimer() {
+      quizTimeRemaining = 15;
+      document.getElementById('quizTimer').textContent = 'Time Remaining: ' + quizTimeRemaining;
+      if(quizTimerInterval) clearInterval(quizTimerInterval);
+      quizTimerInterval = setInterval(() => {
+        quizTimeRemaining--;
+        document.getElementById('quizTimer').textContent = 'Time Remaining: ' + quizTimeRemaining;
+        if(quizTimeRemaining <= 0) {
+          clearInterval(quizTimerInterval);
+          currentQuizIndex++;
+          showQuizQuestion();
+        }
+      }, 1000);
+    }
+
+    function showQuizQuestion() {
+      const quizDiv = document.getElementById('quizContent');
+      quizDiv.innerHTML = '';
+      if(currentQuizIndex < quizQuestions.length) {
+        initQuizTimer();
+        const q = quizQuestions[currentQuizIndex];
+        const questionElem = document.createElement('h3');
+        questionElem.textContent = q.question;
+        quizDiv.appendChild(questionElem);
+        q.options.forEach(option => {
+          const btn = document.createElement('button');
+          btn.className = 'button';
+          btn.textContent = option;
+          btn.onclick = () => {
+            clearInterval(quizTimerInterval);
+            currentQuizIndex++;
+            showQuizQuestion();
+          };
+          quizDiv.appendChild(btn);
+        });
+      } else {
+        clearInterval(quizTimerInterval);
+        const resultElem = document.createElement('h3');
+        resultElem.textContent = "You're a perfect mix of heart and mind – and that was thrilling!";
+        quizDiv.appendChild(resultElem);
+      }
+    }
+
+    /****************** Reverse Psychology Game ******************/
+    let reverseInterval;
+    function initReverse() {
+      const btn = document.getElementById('reverseButton');
+      btn.style.width = '150px';
+      btn.style.height = '50px';
+      btn.style.left = '0px';
+      btn.style.top = '0px';
+      document.getElementById('reverseMessage').textContent = '';
+      document.getElementById('reverseMessage').style.display = 'none';
+      if(reverseInterval) clearInterval(reverseInterval);
+      // Make the button grow and move randomly
+      reverseInterval = setInterval(() => {
+        // Grow the button
+        let currentWidth = parseInt(btn.style.width);
+        let currentHeight = parseInt(btn.style.height);
+        btn.style.width = (currentWidth + 2) + 'px';
+        btn.style.height = (currentHeight + 1) + 'px';
+        // Move the button randomly within the container (max 170px left, 70px top)
+        const maxLeft = 170, maxTop = 70;
+        btn.style.left = Math.floor(Math.random() * maxLeft) + 'px';
+        btn.style.top = Math.floor(Math.random() * maxTop) + 'px';
+        // Optionally add a rotation for extra thrill
+        btn.style.transform = 'rotate(' + Math.floor(Math.random()*20 - 10) + 'deg)';
+      }, 200);
+    }
+
+    document.getElementById('reverseButton').addEventListener('click', function() {
+      if(reverseInterval) clearInterval(reverseInterval);
+      document.getElementById('reverseMessage').textContent = "Gotcha! I knew you'd click into my world!";
+      document.getElementById('reverseMessage').style.display = 'block';
+    });
+  </script>
+</body>
+    </html>
+    
