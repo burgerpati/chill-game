@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lost Messages</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Spectral+SC:wght@400;700&display=swap');
         body {
-            font-family: 'Courier New', monospace;
+            font-family: 'Spectral SC', serif;
             text-align: center;
-            background-color: #f5f0e1;
+            background-color: #f4e4c1;
             color: #3e2723;
             margin: 0;
             overflow: hidden;
@@ -24,6 +25,12 @@
             box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
             max-width: 80%;
             border-radius: 10px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .hidden {
             display: none;
@@ -51,13 +58,13 @@
     </style>
 </head>
 <body>
-    <audio id="bg-music" loop>
+    <audio id="bg-music" loop autoplay>
         <source src="rearrange-my-life.mp3" type="audio/mpeg">
     </audio>
     
     <div id="game-container">
         <h1>Lost Messages</h1>
-        <p>A mysterious puzzle awaits you...</p>
+        <p>Some things are hidden, waiting to be found...</p>
         <button id="start-button">Begin</button>
         
         <div id="puzzle-1" class="hidden">
@@ -79,15 +86,16 @@
         </div>
         
         <div id="final-challenge" class="hidden">
-            <h2>The Final Piece</h2>
+            <h2>The Final Clue</h2>
             <p>Rearrange the words: "STILL AM HERE I"</p>
             <input type="text" id="final-answer">
             <button onclick="checkFinalAnswer()">Submit</button>
         </div>
         
         <div id="final-message" class="hidden">
-            <h2>The Truth Revealed</h2>
-            <p>All these clues were leading to something important... I'm still here.</p>
+            <h2>A Lost Message, Found Again</h2>
+            <p>Some things never truly disappear... I'm still here.</p>
+            <p>No matter what, I'm always here for you.</p>
         </div>
     </div>
 
@@ -131,5 +139,4 @@
         }
     </script>
 </body>
-              </html>
-              
+</html>
