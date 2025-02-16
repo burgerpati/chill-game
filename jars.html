@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Messages</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Spectral+SC:wght@400;700&display=swap');
+        body {
+            font-family: 'Spectral SC', serif;
+            text-align: center;
+            background-color: #f4e4c1;
+            color: #3e2723;
+            margin: 0;
+            overflow: hidden;
+        }
+        #game-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #e6ccb2;
+            padding: 20px;
+            border: 5px solid #8d6e63;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 80%;
+            border-radius: 10px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #6d4c41;
+        }
+        input {
+            padding: 8px;
+            border: 2px solid #8d6e63;
+            background: #f5f0e1;
+            color: #3e2723;
+            font-size: 16px;
+            text-align: center;
+        }
+        .jar-container {
+            margin-top: 20px;
+        }
+        .paper {
+            display: none;
+            background: #f5f0e1;
+            padding: 10px;
+            border: 2px solid #8d6e63;
+            margin: 5px auto;
+            width: 80%;
+            font-style: italic;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" loop autoplay>
+        <source src="rearrange-my-life.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div id="game-container">
+        <h1>Lost Messages</h1>
+        <p>Some things are hidden, waiting to be found...</p>
+        <button id="start-button">Begin</button>
+        
+        <div id="puzzle-1" class="hidden">
+            <p>Decipher this: "3 - 1 = ?"</p>
+            <input type="text" id="answer-1">
+            <button onclick="checkAnswer1()">Submit</button>
+        </div>
+        
+        <div id="puzzle-2" class="hidden">
+            <p>Find the missing piece: "SH_ _ OW"</p>
+            <input type="text" id="answer-2">
+            <button onclick="checkAnswer2()">Submit</button>
+        </div>
+
+        <div id="puzzle-3" class="hidden">
+            <p>What disappears when you say its name?</p>
+            <input type="text" id="answer-3">
+            <button onclick="checkAnswer3()">Submit</button>
+        </div>
+        
+        <div id="final-challenge" class="hidden">
+            <h2>The Final Clue</h2>
+            <p>Rearrange the words: "STILL AM HERE I"</p>
+            <input type="text" id="final-answer">
+            <button onclick="checkFinalAnswer()">Submit</button>
+        </div>
+        
+        <div id="jar-section" class="hidden">
+            <h2>Pick a Note from the Jar</h2>
+            <div class="jar-container">
+                <button onclick="pickPaper()">Pick a Paper</button>
+            </div>
+            <div id="papers-container">
+                <p class="paper">"No matter what, I'm always here for you."</p>
+                <p class="paper">"Some things never truly disappear... like us."</p>
+                <p class="paper">"Even in silence, my thoughts are with you."</p>
+                <p class="paper">"If you ever need someone, just look behind you."</p>
+                <p class="paper">"Distance and time change many things, but not this."</p>
+                <p class="paper">"I hope this message finds the heart it was meant for."</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', function() {
+            document.getElementById('start-button').classList.add('hidden');
+            document.getElementById('puzzle-1').classList.remove('hidden');
+            document.getElementById('bg-music').play();
+        });
+
+        function checkAnswer1() {
+            if (document.getElementById('answer-1').value === "2") {
+                document.getElementById('puzzle-1').classList.add('hidden');
+                document.getElementById('puzzle-2').classList.remove('hidden');
+            }
+        }
+
+        function checkAnswer2() {
+            if (document.getElementById('answer-2').value.toLowerCase() === "shadow") {
+                document.getElementById('puzzle-2').classList.add('hidden');
+                document.getElementById('puzzle-3').classList.remove('hidden');
+            }
+        }
+
+        function checkAnswer3() {
+            if (document.getElementById('answer-3').value.toLowerCase() === "silence") {
+                document.getElementById('puzzle-3').classList.add('hidden');
+                document.getElementById('final-challenge').classList.remove('hidden');
+            }
+        }
+
+        function checkFinalAnswer() {
+            if (document.getElementById('final-answer').value.toLowerCase() === "i am still here") {
+                document.getElementById('final-challenge').classList.add('hidden');
+                document.getElementById('jar-section').classList.remove('hidden');
+            }
+        }
+
+        function pickPaper() {
+            let papers = document.querySelectorAll('.paper');
+            for (let paper of papers) {
+                if (paper.style.display === "none") {
+                    paper.style.display = "block";
+                    break;
+                }
+            }
+        }
+    </script>
+</body>
+  </html>
+              
