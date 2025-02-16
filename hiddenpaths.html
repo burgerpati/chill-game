@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Paths</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1a1a2e;
+            color: white;
+            margin: 0;
+            overflow: hidden;
+        }
+        #game-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #c8234c;
+        }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" loop>
+        <source src="rearrange-my-life.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div id="game-container">
+        <h1>Welcome to Hidden Paths</h1>
+        <p>Find the hidden clues to reveal the message.</p>
+        <button id="start-button">Start</button>
+        
+        <div id="puzzle-1" class="hidden">
+            <p>What is something that is always there but never seen?</p>
+            <input type="text" id="answer-1">
+            <button onclick="checkAnswer1()">Submit</button>
+        </div>
+        
+        <div id="message" class="hidden">
+            <h2>You've found the truth!</h2>
+            <p>No matter what, I'm always here for you.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', function() {
+            document.getElementById('start-button').classList.add('hidden');
+            document.getElementById('puzzle-1').classList.remove('hidden');
+            document.getElementById('bg-music').play();
+        });
+
+        function checkAnswer1() {
+            let answer = document.getElementById('answer-1').value.toLowerCase();
+            if (answer === "shadow") {
+                document.getElementById('puzzle-1').classList.add('hidden');
+                document.getElementById('message').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
