@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychology Fun Pack</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #1a1a2e;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .game-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .maze-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 3px;
+            padding: 5px;
+            background-color: #0f3460;
+            width: 300px;
+            height: 300px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #e94560;
+        }
+        .wall { background-color: #16213e; }
+        .player { background-color: #f7d794; border-radius: 50%; }
+        .goal { background-color: #4cd137; }
+        .button { margin: 10px; padding: 10px; background: #f7d794; border: none; cursor: pointer; }
+        #message { display: none; background: rgba(0, 0, 0, 0.8); padding: 10px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Psychology Fun Pack</h1>
+    <button class="button" onclick="startGame('maze')">Start Thought Maze</button>
+    <button class="button" onclick="startGame('bubble')">Start Thought Bubble Pop</button>
+    <button class="button" onclick="startGame('quiz')">Start Love or Logic</button>
+    <button class="button" onclick="startGame('reverse')">Start Reverse Psychology</button>
+
+    <div id="maze" class="game-container">
+        <div class="maze-container"></div>
+        <div id="message">You found your way! Maybe that means we're on the same wavelength.</div>
+    </div>
+
+    <script>
+        function startGame(game) {
+            document.querySelectorAll('.game-container').forEach(el => el.style.display = 'none');
+            document.getElementById(game).style.display = 'block';
+            if (game === 'maze') drawMaze();
+        }
+
+        const maze = [
+            [1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 0, 1],
+            [1, 0, 1, 0, 0, 1],
+            [1, 0, 1, 1, 0, 1],
+            [1, 0, 0, 0, 2, 1],
+            [1, 1, 1, 1, 1, 1]
+        ];
+        
+        let playerPos = { x: 1, y: 1 };
+        const mazeContainer = document.querySelector(".maze-container");
+        
+        function drawMaze() {
+            mazeContainer.innerHTML = "";
+            maze.forEach((row, y) => {
+                row.forEach((cell, x) => {
+                    let div = document.createElement("div");
+                    div.classList.add("cell");
+                    if (cell === 1) div.classList.add("wall");
+                    if (cell === 2) div.classList.add("goal");
+                    if (x === playerPos.x && y === playerPos.y) div.classList.add("player");
+                    mazeContainer.appendChild(div);
+                });
+            });
+        }
+
+        function movePlayer(dx, dy) {
+            let newX = playerPos.x + dx;
+            let newY = playerPos.y + dy;
+            if (maze[newY][newX] !== 1) {
+                playerPos.x = newX;
+                playerPos.y = newY;
+                drawMaze();
+            }
+            if (maze[newY][newX] === 2) {
+                document.getElementById("message").style.display = "block";
+            }
+        }
+
+        window.addEventListener("keydown", (e) => {
+            switch (e.key) {
+                case "ArrowUp": movePlayer(0, -1); break;
+                case "ArrowDown": movePlayer(0, 1); break;
+                case "ArrowLeft": movePlayer(-1, 0); break;
+                case "ArrowRight": movePlayer(1, 0); break;
+            }
+        });
+
+        drawMaze();
+    </script>
+</body>
+</html>
