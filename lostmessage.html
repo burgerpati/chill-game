@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Messages</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            background-color: #f5f0e1;
+            color: #3e2723;
+            margin: 0;
+            overflow: hidden;
+        }
+        #game-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #e6ccb2;
+            padding: 20px;
+            border: 5px solid #8d6e63;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            max-width: 80%;
+            border-radius: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        button {
+            background-color: #8d6e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #6d4c41;
+        }
+        input {
+            padding: 8px;
+            border: 2px solid #8d6e63;
+            background: #f5f0e1;
+            color: #3e2723;
+            font-size: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" loop>
+        <source src="rearrange-my-life.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div id="game-container">
+        <h1>Lost Messages</h1>
+        <p>A mysterious puzzle awaits you...</p>
+        <button id="start-button">Begin</button>
+        
+        <div id="puzzle-1" class="hidden">
+            <p>Decipher this: "3 - 1 = ?"</p>
+            <input type="text" id="answer-1">
+            <button onclick="checkAnswer1()">Submit</button>
+        </div>
+        
+        <div id="puzzle-2" class="hidden">
+            <p>Find the missing piece: "SH_ _ OW"</p>
+            <input type="text" id="answer-2">
+            <button onclick="checkAnswer2()">Submit</button>
+        </div>
+
+        <div id="puzzle-3" class="hidden">
+            <p>What disappears when you say its name?</p>
+            <input type="text" id="answer-3">
+            <button onclick="checkAnswer3()">Submit</button>
+        </div>
+        
+        <div id="final-challenge" class="hidden">
+            <h2>The Final Piece</h2>
+            <p>Rearrange the words: "STILL AM HERE I"</p>
+            <input type="text" id="final-answer">
+            <button onclick="checkFinalAnswer()">Submit</button>
+        </div>
+        
+        <div id="final-message" class="hidden">
+            <h2>The Truth Revealed</h2>
+            <p>All these clues were leading to something important... I'm still here.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', function() {
+            document.getElementById('start-button').classList.add('hidden');
+            document.getElementById('puzzle-1').classList.remove('hidden');
+            document.getElementById('bg-music').play();
+        });
+
+        function checkAnswer1() {
+            let answer = document.getElementById('answer-1').value;
+            if (answer === "2") {
+                document.getElementById('puzzle-1').classList.add('hidden');
+                document.getElementById('puzzle-2').classList.remove('hidden');
+            }
+        }
+
+        function checkAnswer2() {
+            let answer = document.getElementById('answer-2').value.toLowerCase();
+            if (answer === "shadow") {
+                document.getElementById('puzzle-2').classList.add('hidden');
+                document.getElementById('puzzle-3').classList.remove('hidden');
+            }
+        }
+
+        function checkAnswer3() {
+            let answer = document.getElementById('answer-3').value.toLowerCase();
+            if (answer === "silence") {
+                document.getElementById('puzzle-3').classList.add('hidden');
+                document.getElementById('final-challenge').classList.remove('hidden');
+            }
+        }
+
+        function checkFinalAnswer() {
+            let answer = document.getElementById('final-answer').value.toLowerCase();
+            if (answer === "i am still here") {
+                document.getElementById('final-challenge').classList.add('hidden');
+                document.getElementById('final-message').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+              </html>
+              
